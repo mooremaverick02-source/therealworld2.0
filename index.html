@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAVREK | THE REAL WORLD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --crimson: #990000;
+            --black: #050505;
+            --zinc: #121212;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--black);
+            font-family: 'Space Mono', monospace;
+            color: #fff;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* SCANLINE EFFECT */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10000; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* 1. THE GATEWAY */
+        #gate {
+            height: 100vh; width: 100%; position: fixed; z-index: 9999;
+            background: black; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        .terminal-loader { color: var(--gold); font-size: 0.7rem; margin-bottom: 5px; opacity: 0.8; }
+
+        .initiate-btn {
+            background: transparent; color: white; border: 1px solid #333;
+            padding: 20px 80px; font-family: 'Syncopate'; font-size: 0.8rem;
+            letter-spacing: 10px; cursor: pointer; transition: 0.5s; margin-top: 40px;
+        }
+
+        .initiate-btn:hover { background: var(--crimson); border-color: var(--crimson); box-shadow: 0 0 50px var(--crimson); }
+
+        /* 2. MAIN SANCTUARY */
+        #sanctuary { display: none; opacity: 0; transition: 2s; }
+
+        .ticker {
+            background: var(--crimson); color: white; padding: 10px; font-size: 0.6rem;
+            font-weight: bold; position: fixed; top: 0; width: 100%; z-index: 5000;
+            white-space: nowrap; overflow: hidden;
+        }
+        .ticker-inner { display: inline-block; animation: ticker 25s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* MASK STYLING */
+        .hero { text-align: center; padding: 150px 0 50px; perspective: 1000px; }
+        .mask-container { position: relative; display: inline-block; }
+        .mask-img {
+            width: 100%; max-width: 500px; 
+            filter: drop-shadow(0 0 30px rgba(153, 0, 0, 0.3));
+            transition: 0.1s;
+        }
+        .mask-container:hover .mask-img { animation: glitch 0.3s infinite; }
+
+        @keyframes glitch {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-5px, 5px); filter: hue-rotate(90deg); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+
+        /* 3. THE VAULT (PASSWORD PROTECTED) */
+        .vault {
+            background: #0a0a0a; border: 1px solid #222; margin: 50px auto;
+            max-width: 800px; padding: 60px; text-align: center;
+        }
+        .vault-input {
+            background: transparent; border: none; border-bottom: 2px solid var(--gold);
+            color: white; font-size: 2rem; text-align: center; width: 300px; outline: none;
+            font-family: 'Syncopate';
+        }
+
+        /* 4. STATISTICS */
+        .stats { display: grid; grid-template-cols: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 40px 0; }
+        .stat-card { background: var(--zinc); padding: 30px; border: 1px solid #1a1a1a; }
+        .stat-label { font-size: 0.6rem; color: #666; text-transform: uppercase; }
+        .stat-value { font-size: 1.5rem; color: var(--gold); font-family: 'Syncopate'; display: block; }
+
+        /* 5. PRAYER WALL */
+        .prayer-wall {
+            background: black; border: 1px solid #222; height: 300px; overflow-y: auto;
+            padding: 20px; text-align: left;
+        }
+        .prayer-entry { border-left: 2px solid var(--crimson); padding-left: 15px; margin-bottom: 15px; font-size: 0.85rem; }
+
+        /* FLOATING BADGE */
+        .autotune-badge {
+            position: fixed; bottom: 20px; right: 20px; border: 2px solid var(--crimson);
+            color: var(--crimson); padding: 10px; font-weight: bold; transform: rotate(-10deg);
+            z-index: 8000; background: black; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="autotune-badge">VOCAL AUTHENTICITY: 100% RAW <br> (NO AUTOTUNE)</div>
+
+    <div class="ticker"><div class="ticker-inner">
+        // SYSTEM: THE REAL WORLD IS LIVE // CITIZEN UPRISING DETECTED // NO FILTERS // HGA // INDEPENDENT4LIFE // [TRUTH] IS NOT A TREND //
+    </div></div>
+
+    <div id="gate">
+        <div class="terminal-loader" id="L1">> INITIALIZING MAVREK.EXE...</div>
+        <div class="terminal-loader" id="L2" style="display:none;">> ANALYZING VOCAL PURITY...</div>
+        <div class="terminal-loader" id="L3" style="display:none;">> 0% AUTOTUNE CONFIRMED.</div>
+        <button class="initiate-btn" onclick="unlock()">ENTER SANCTUARY</button>
+    </div>
+
+    <main id="sanctuary">
+        <div style="max-width: 1100px; margin: 0 auto; padding: 20px;">
+            
+            <div class="hero">
+                <div class="mask-container">
+                    <img src="https://raw.githubusercontent.com/mavrek-media/assets/main/mask_no_head.png" class="mask-img" id="mImage">
+                </div>
+                <h1 style="font-family:'Syncopate'; font-size: 5rem; letter-spacing: -10px; margin-top: -60px; color: rgba(255,255,255,0.1);">MAVREK</h1>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-label">Next Release</span>
+                    <span class="stat-value" id="timer">00:00:00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Verified Citizens</span>
+                    <span class="stat-value">14,902</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Industry Ties</span>
+                    <span class="stat-value">0.00%</span>
+                </div>
+            </div>
+
+            <section class="vault">
+                <div id="locked">
+                    <h2 style="font-family:'Syncopate'; font-size: 1rem; color: var(--crimson);">THE FORGE [ENCRYPTED]</h2>
+                    <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 25px;">LEVEL 1 CITIZENS: ENTER PASSCODE</p>
+                    <input type="password" id="pass" class="vault-input" placeholder="****" oninput="checkPass()">
+                </div>
+                <div id="unlocked" style="display:none;">
+                    <h2 style="font-family:'Syncopate'; font-size: 1rem; color: var(--gold);">ACCESS GRANTED</h2>
+                    <p>Unreleased Files Recovered:</p>
+                    <ul style="list-style:none; padding:0;">
+                        <li><a href="#" style="color:white;">FAILURE_VOCAL_STEMS.RAW</a></li>
+                        <li><a href="#" style="color:white;">MARKED_FOR_WAR_DEMO.MP3</a></li>
+                    </ul>
+                </div>
+            </section>
+
+            <h3 style="font-family:'Syncopate'; font-size: 0.8rem; border-bottom: 1px solid var(--gold); padding-bottom: 10px;">THE ROLL CALL (COMMUNITY)</h3>
+            <div class="prayer-wall" id="pWall">
+                <div class="prayer-entry"><span style="color:var(--gold)">[SYSTEM]</span> Welcome, Citizen. The filter is gone.</div>
+            </div>
+            <input type="text" id="pInput" style="width:100%; background:black; border:1px solid #333; color:white; padding:20px; margin-top:10px; outline:none;" placeholder="Drop your city and your flag...">
+
+            <footer style="text-align: center; padding: 120px 0; opacity: 0.2; font-size: 0.6rem; letter-spacing: 5px;">
+                #INDEPENDENT4LIFE // MAVREK MEDIA // THE REAL WORLD
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        // GATE LOGIC
+        setTimeout(() => { document.getElementById('L2').style.display = 'block'; }, 1000);
+        setTimeout(() => { document.getElementById('L3').style.display = 'block'; }, 2000);
+
+        function unlock() {
+            document.getElementById('gate').style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('sanctuary').style.display = 'block';
+                setTimeout(() => { document.getElementById('sanctuary').style.opacity = '1'; }, 100);
+            }, 1000);
+        }
+
+        // PASSWORD LOGIC (Vault)
+        function checkPass() {
+            if(document.getElementById('pass').value === "HGA777") {
+                document.getElementById('locked').style.display = 'none';
+                document.getElementById('unlocked').style.display = 'block';
+            }
+        }
+
+        // TIMER LOGIC
+        const release = new Date("March 1, 2026 00:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const d = release - now;
+            const h = Math.floor((d % (86400000)) / (3600000));
+            const m = Math.floor((d % (3600000)) / (60000));
+            const s = Math.floor((d % (60000)) / 1000);
+            document.getElementById("timer").innerHTML = h + "h " + m + "m " + s + "s";
+        }, 1000);
+
+        // PRAYER WALL SUBMISSION
+        document.getElementById('pInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && this.value !== "") {
+                const wall = document.getElementById('pWall');
+                wall.innerHTML = `<div class="prayer-entry"><span style="color:var(--gold)">[CITIZEN]</span> ${this.value}</div>` + wall.innerHTML;
+                this.value = "";
+            }
+        });
+
+        // PARALLAX MASK EFFECT
+        document.addEventListener('mousemove', (e) => {
+            const m = document.getElementById('mImage');
+            const x = (window.innerWidth / 2 - e.pageX) / 40;
+            const y = (window.innerHeight / 2 - e.pageY) / 40;
+            m.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        });
+    </script>
+</body>
+</html>
